@@ -29,6 +29,12 @@
   "The top-level handler"
   (clingon:print-usage-and-exit cmd t))
 
+(defun top-level/sub-commands ()
+  "Returns the list of top-level sub-commands"
+  (list
+   (wake/command)
+   (zsh-completions/command)))
+
 (defun top-level/command ()
   "Returns the top-level command"
   (clingon:make-command
@@ -43,7 +49,7 @@
    :license "BSD 2-Clause"
    :handler #'top-level/handler
    :options nil
-   :sub-commands (list (wake/command))))
+   :sub-commands (top-level/sub-commands)))
 
 (defun main ()
   "Main CLI entrypoint"

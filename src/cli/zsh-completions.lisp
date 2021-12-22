@@ -23,31 +23,18 @@
 ;; (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
 ;; THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-(defpackage :cl-wol-cli-system
-  (:use :cl :asdf))
-(in-package :cl-wol-cli-system)
+(in-package :cl-wol.cli)
 
-(defsystem "cl-wol.cli"
-  :name "cl-wol.cli"
-  :long-name "cl-wol.cli"
-  :description "CLI built on top of the cl-wol.core system"
-  :version "0.1.0"
-  :author "Marin Atanasov Nikolov <dnaeon@gmail.com>"
-  :maintainer "Marin Atanasov Nikolov <dnaeon@gmail.com>"
-  :license "BSD 2-Clause"
-  :long-description #.(uiop:read-file-string
-		       (uiop:subpathname *load-pathname* "README.org"))
-  :homepage "https://github.com/dnaeon/cl-wol"
-  :bug-tracker "https://github.com/dnaeon/cl-wol"
-  :source-control "https://github.com/dnaeon/cl-wol"
-  :depends-on (:cl-wol.core :clingon)
-  :build-operation "program-op"
-  :build-pathname "bin/wol"
-  :entry-point "cl-wol.cli:main"
-  :components ((:module "cli"
-		:pathname #P"src/cli/"
-		:serial t
-		:components ((:file "package")
-			     (:file "wake")
-			     (:file "zsh-completions")
-			     (:file "main")))))
+(defun zsh-completions/handler (cmd)
+  ;; Start from the parent command when generating the completions,
+  ;; so that we can traverse all sub-commands in the tree.
+  (let ((parent (clingon:command-parent cmd)))
+    (clingon:print-documentation :zsh-completions parent t)))
+
+(defun zsh-completions/command ()
+  "Returns a command for generating Zsh completions script"
+  (clingon:make-command
+   :name "zsh-completions"
+   :description "generate the Zsh completions script"
+   :usage ""
+   :handler #'zsh-completions/handler))
