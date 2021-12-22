@@ -24,9 +24,9 @@
 ;; THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 (in-package :cl-user)
-(defpackage :cl-wol.core.test
+(defpackage :cl-wol.test
   (:use :cl :rove))
-(in-package :cl-wol.core.test)
+(in-package :cl-wol.test)
 
 (deftest test-mac-addresses
   (testing "test supported MAC addresses"

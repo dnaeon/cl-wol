@@ -23,13 +23,13 @@
 ;; (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
 ;; THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-(defpackage :cl-wol-core-test-system
+(defpackage :cl-wol-test-system
   (:use :cl :asdf))
-(in-package :cl-wol-core-test-system)
+(in-package :cl-wol-test-system)
 
-(defsystem "cl-wol.core.test"
-  :name "cl-wol.core.test"
-  :long-name "cl-wol.core.test"
+(defsystem "cl-wol.test"
+  :name "cl-wol.test"
+  :long-name "cl-wol.test"
   :description "Test suite for cl-wol.core system"
   :version "0.1.0"
   :author "Marin Atanasov Nikolov <dnaeon@gmail.com>"
@@ -44,4 +44,4 @@
   :components ((:module "tests"
 		:pathname #P"tests/"
 		:components ((:file "test-core"))))
-  :perform (test-op (op c) (uiop:symbol-call :rove :run-suite :cl-wol.core.test)))
+  :perform (test-op (op c) (uiop:symbol-call :rove :run-suite :cl-wol.test)))

@@ -44,4 +44,4 @@
   :components ((:module "core"
 		:pathname #P"src/core/"
 		:components ((:file "core"))))
-  :in-order-to ((test-op (test-op "cl-wol.core.test"))))
+  :in-order-to ((test-op (test-op "cl-wol.test"))))
