@@ -29,6 +29,8 @@
   (:nicknames :wol.core)
   (:import-from
    :cl-ppcre)
+  (:import-from
+   :usocket)
   (:export
    :mac-address
    :mac-octets
@@ -42,16 +44,20 @@
 (in-package :cl-wol.core)
 
 (defgeneric mac-address (object)
-  (:documentation "Returns the string representation of the MAC address associated with the OBJECT"))
+  (:documentation "Returns the string representation of the MAC
+  address associated with the OBJECT"))
 
 (defgeneric mac-octets (object)
-  (:documentation "Returns a vector of bytes representing the MAC address associated with the OBJECT"))
+  (:documentation "Returns a vector of bytes representing the MAC
+  address associated with the OBJECT"))
 
 (defgeneric encode-payload (object)
-  (:documentation "Encodes the OBJECT and returns a vector of bytes representing the payload for waking up a remote system"))
+  (:documentation "Encodes the OBJECT and returns a vector of bytes
+  representing the payload for waking up a remote system"))
 
-(defgeneric wake (object)
-  (:documentation "Wakes up a remote system"))
+(defgeneric wake (object address port)
+  (:documentation "Wakes up a remote system by encoding the OBJECT and
+  sending a broadcast packet to the given ADDRESS and PORT"))
 
 (define-condition invalid-mac-address (simple-error)
   ((mac-address
@@ -107,3 +113,10 @@
       (loop :for byte :across (mac-octets object) :do
 	(push byte payload)))
     (make-array 102 :element-type '(unsigned-byte 8) :initial-contents (nreverse payload))))
+
+(defmethod wake ((object magic-packet) address port)
+  (let ((payload (encode-payload object))
+	(socket (usocket:socket-connect nil nil :protocol :datagram :element-type '(unsigned-byte 8))))
+    (setf (usocket:socket-option socket :broadcast) t)
+    (usocket:socket-send socket payload nil :host address :port port)
+    (usocket:socket-close socket)))
