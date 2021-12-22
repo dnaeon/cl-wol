@@ -69,7 +69,7 @@
   (:documentation "A condition which is signalled upon an invalid MAC address"))
 
 (defparameter *mac-regex*
-  "^([\\da-f]{2})[ :-]([\\da-f]{2})[ :-]([\\da-f]{2})[ :-]([\\da-f]{2})[ :-]([\\da-f]{2})[ :-]([\\da-f]{2})$"
+  "^([\\da-f]{2})[:-]([\\da-f]{2})[:-]([\\da-f]{2})[:-]([\\da-f]{2})[:-]([\\da-f]{2})[:-]([\\da-f]{2})$"
   "Regex used to parse MAC addresses")
 
 (defun parse-mac-address (mac-address)
