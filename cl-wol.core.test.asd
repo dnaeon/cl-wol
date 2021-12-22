@@ -43,5 +43,5 @@
   :depends-on (:cl-wol.core :rove)
   :components ((:module "tests"
 		:pathname #P"tests/"
-		:components ((:file "core"))))
+		:components ((:file "test-core"))))
   :perform (test-op (op c) (uiop:symbol-call :rove :run-suite :cl-wol.core.test)))
