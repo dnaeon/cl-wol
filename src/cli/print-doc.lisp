@@ -23,32 +23,18 @@
 ;; (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
 ;; THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-(defpackage :cl-wol-cli-system
-  (:use :cl :asdf))
-(in-package :cl-wol-cli-system)
+(in-package :cl-wol.cli)
 
-(defsystem "cl-wol.cli"
-  :name "cl-wol.cli"
-  :long-name "cl-wol.cli"
-  :description "CLI built on top of the cl-wol.core system"
-  :version "0.1.0"
-  :author "Marin Atanasov Nikolov <dnaeon@gmail.com>"
-  :maintainer "Marin Atanasov Nikolov <dnaeon@gmail.com>"
-  :license "BSD 2-Clause"
-  :long-description #.(uiop:read-file-string
-		       (uiop:subpathname *load-pathname* "README.org"))
-  :homepage "https://github.com/dnaeon/cl-wol"
-  :bug-tracker "https://github.com/dnaeon/cl-wol"
-  :source-control "https://github.com/dnaeon/cl-wol"
-  :depends-on (:cl-wol.core :clingon)
-  :build-operation "program-op"
-  :build-pathname "bin/wol"
-  :entry-point "cl-wol.cli:main"
-  :components ((:module "cli"
-		:pathname #P"src/cli/"
-		:serial t
-		:components ((:file "package")
-			     (:file "wake")
-			     (:file "zsh-completions")
-			     (:file "print-doc")
-			     (:file "main")))))
+(defun print-doc/handler (cmd)
+  ;; Print the documentation starting from the parent command, so we
+  ;; can traverse all sub-commands in the tree.
+  (clingon:print-documentation :markdown (clingon:command-parent cmd) t))
+
+(defun print-doc/command ()
+  "Returns a command which will print the app's documentation"
+  (clingon:make-command
+   :name "print-doc"
+   :description "print the documentation"
+   :usage ""
+   :handler #'print-doc/handler))
+

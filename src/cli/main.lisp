@@ -32,6 +32,7 @@
 (defun top-level/sub-commands ()
   "Returns the list of top-level sub-commands"
   (list
+   (print-doc/command)
    (wake/command)
    (zsh-completions/command)))
 
