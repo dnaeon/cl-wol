@@ -48,8 +48,13 @@
   :build-operation "program-op"
   :build-pathname "bin/wol"
   :entry-point "cl-wol.cli:main"
-  :components ((:module "cli"
+  :components ((:module "migrations"
+		:pathname #P"src/cli/migrations/"
+		:components ((:static-file "20211222183337-add_hosts_table.down.sql")
+			     (:static-file "20211222183337-add_hosts_table.up.sql")))
+	       (:module "cli"
 		:pathname #P"src/cli/"
+		:depends-on ("migrations")
 		:serial t
 		:components ((:file "package")
 			     (:file "wake")
