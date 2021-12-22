@@ -29,6 +29,9 @@
   (:nicknames :wol.cli)
   (:import-from :cl-wol.core)
   (:import-from :clingon)
+  (:import-from :cl-migratum)
+  (:import-from :cl-migratum.driver.sql)
+  (:import-from :cl-migratum.provider.local-path)
   (:export
    :main))
 (in-package :cl-wol.cli)

@@ -40,7 +40,11 @@
   :homepage "https://github.com/dnaeon/cl-wol"
   :bug-tracker "https://github.com/dnaeon/cl-wol"
   :source-control "https://github.com/dnaeon/cl-wol"
-  :depends-on (:cl-wol.core :clingon)
+  :depends-on (:cl-wol.core
+	       :clingon
+	       :cl-migratum
+	       :cl-migratum.driver.sql
+	       :cl-migratum.provider.local-path)
   :build-operation "program-op"
   :build-pathname "bin/wol"
   :entry-point "cl-wol.cli:main"
@@ -51,4 +55,5 @@
 			     (:file "wake")
 			     (:file "zsh-completions")
 			     (:file "print-doc")
+			     (:file "init-db")
 			     (:file "main")))))
