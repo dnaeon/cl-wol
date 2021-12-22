@@ -40,7 +40,7 @@
   :homepage "https://github.com/dnaeon/cl-wol"
   :bug-tracker "https://github.com/dnaeon/cl-wol"
   :source-control "https://github.com/dnaeon/cl-wol"
-  :depends-on (:cl-ppcre)
+  :depends-on (:cl-ppcre :usocket)
   :components ((:module "core"
 		:pathname #P"src/core/"
 		:components ((:file "core"))))
