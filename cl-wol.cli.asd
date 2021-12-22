@@ -41,6 +41,12 @@
   :bug-tracker "https://github.com/dnaeon/cl-wol"
   :source-control "https://github.com/dnaeon/cl-wol"
   :depends-on (:cl-wol.core :clingon)
+  :build-operation "program-op"
+  :build-pathname "bin/wol"
+  :entry-point "cl-wol.cli:main"
   :components ((:module "cli"
 		:pathname #P"src/cli/"
-		:components ((:file "main")))))
+		:serial t
+		:components ((:file "package")
+			     (:file "wake")
+			     (:file "main")))))
