@@ -43,7 +43,7 @@
    :license "BSD 2-Clause"
    :handler #'top-level/handler
    :options nil
-   :sub-commands nil))
+   :sub-commands (list (wake/command))))
 
 (defun main ()
   "Main CLI entrypoint"
