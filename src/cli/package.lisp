@@ -23,29 +23,12 @@
 ;; (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
 ;; THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+(in-package :cl-user)
+(defpackage :cl-wol.cli
+  (:use :cl)
+  (:nicknames :wol.cli)
+  (:import-from :cl-wol.core)
+  (:import-from :clingon)
+  (:export
+   :main))
 (in-package :cl-wol.cli)
-
-(defun top-level/handler (cmd)
-  "The top-level handler"
-  (clingon:print-usage-and-exit cmd t))
-
-(defun top-level/command ()
-  "Returns the top-level command"
-  (clingon:make-command
-   :name "wol"
-   :version "0.1.0"
-   :description "wake up magic-packet compliant systems"
-   :long-description (format nil "The WoL application wakes up ~
-                                  remote systems identified by their ~
-                                  MAC addresses by broadcasting a ~
-                                  magic packet")
-   :authors '("Marin Atanasov Nikolov <dnaeon@gmail.com>")
-   :license "BSD 2-Clause"
-   :handler #'top-level/handler
-   :options nil
-   :sub-commands nil))
-
-(defun main ()
-  "Main CLI entrypoint"
-  (let ((app (top-level/command)))
-    (clingon:run app)))
