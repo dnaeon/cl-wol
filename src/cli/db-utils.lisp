@@ -25,42 +25,10 @@
 
 (in-package :cl-wol.cli)
 
-(defun migrations-path ()
+(defun db-migrations-path ()
   "Returns the path to the migration files"
   (asdf:system-relative-pathname :cl-wol.cli "src/cli/migrations/"))
 
 (defun make-db-conn (db-path)
   "Creates a new database connection to the given DB-PATH"
   (cl-dbi:connect :sqlite3 :database-name db-path))
-
-(defun init-db/handler (cmd)
-  "Handler for the `init-db' command"
-  (let* ((database (clingon:getopt cmd :database))
-	 (db-conn (make-db-conn database))
-	 (provider (cl-migratum.provider.local-path:make-local-path-provider (db-migrations-path)))
-	 (driver (cl-migratum.driver.sql:make-sql-driver provider db-conn)))
-    (cl-migratum:provider-init provider)
-    (cl-migratum:driver-init driver)
-    (cl-migratum:apply-pending driver)
-    (cl-migratum:provider-shutdown provider)
-    (cl-migratum:driver-shutdown driver)))
-
-(defun init-db/options ()
-  "Returns the options of the `init-db' command"
-  (list
-   (clingon:make-option :filepath
-			:description "path to the database file"
-			:short-name #\d
-			:long-name "database"
-			:env-vars '("DATABASE")
-			:required t
-			:key :database)))
-
-(defun init-db/command ()
-  "Returns the command for initializing the database"
-  (clingon:make-command
-   :name "init-db"
-   :description "init local database file"
-   :aliases '("i")
-   :options (init-db/options)
-   :handler #'init-db/handler))
