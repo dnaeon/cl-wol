@@ -25,37 +25,31 @@
 
 (in-package :cl-wol.cli)
 
-(defun top-level/handler (cmd)
-  "The top-level handler"
-  (clingon:print-usage-and-exit cmd t))
+(defun delete-host/handler (cmd)
+  "Handler for the `delete-host' command"
+  (unless (clingon:command-arguments cmd)
+    (clingon:print-usage-and-exit cmd t))
+  (let* ((database (clingon:getopt cmd :database))
+	 (db-conn (make-db-conn database)))
+    (dolist (name (clingon:command-arguments cmd))
+      (db-execute db-conn "DELETE FROM hosts WHERE name = ?" name))))
 
-(defun top-level/sub-commands ()
-  "Returns the list of top-level sub-commands"
+(defun delete-host/options ()
+  "Returns the options of the `delete-host' command"
   (list
-   (add-host/command)
-   (delete-host/command)
-   (init-db/command)
-   (print-doc/command)
-   (wake/command)
-   (zsh-completions/command)))
+   (clingon:make-option :filepath
+			:description "path to the database file"
+			:short-name #\d
+			:long-name "database"
+			:env-vars '("DATABASE")
+			:required t
+			:key :database)))
 
-(defun top-level/command ()
-  "Returns the top-level command"
+(defun delete-host/command ()
+  "Returns the command for deleting hosts from the database file"
   (clingon:make-command
-   :name "wol"
-   :version "0.1.0"
-   :description "wake up magic-packet compliant systems"
-   :long-description (format nil "The WoL application wakes up ~
-                                  remote systems identified by their ~
-                                  MAC addresses by broadcasting a ~
-                                  magic packet")
-   :authors '("Marin Atanasov Nikolov <dnaeon@gmail.com>")
-   :license "BSD 2-Clause"
-   :handler #'top-level/handler
-   :options nil
-   :sub-commands (top-level/sub-commands)))
-
-(defun main ()
-  "Main CLI entrypoint"
-  (let ((app (top-level/command)))
-    (clingon:run app)))
+   :name "delete-host"
+   :description "delete host(s) from the database"
+   :usage "NAME ..."
+   :options (delete-host/options)
+   :handler #'delete-host/handler))

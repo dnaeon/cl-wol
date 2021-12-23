@@ -58,6 +58,5 @@
    :name "wake"
    :description "wakes up remote systems"
    :usage "MAC-ADDRESS ..."
-   :aliases '("w")
    :handler #'wake/handler
    :options (wake/options)))

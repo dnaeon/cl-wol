@@ -65,4 +65,5 @@
 			     (:file "print-doc")
 			     (:file "init-db")
 			     (:file "add-host")
+			     (:file "delete-host")
 			     (:file "main")))))

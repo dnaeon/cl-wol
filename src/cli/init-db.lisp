@@ -48,6 +48,5 @@
   (clingon:make-command
    :name "init-db"
    :description "init local database file"
-   :aliases '("i")
    :options (init-db/options)
    :handler #'init-db/handler))

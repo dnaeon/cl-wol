@@ -35,7 +35,7 @@
       (error 'cl-wol.core:invalid-mac-address :mac-address address))
     (when (get-host-from-db db-conn name)
       (error "Host with name ~A already exists" name))
-    (db-execute (make-db-conn database) "INSERT INTO hosts (name, addr) VALUES (?, ?)" name address)))
+    (db-execute db-conn "INSERT INTO hosts (name, addr) VALUES (?, ?)" name address)))
 
 (defun add-host/options ()
   "Returns the options of the `add-host' command"
@@ -65,6 +65,5 @@
   (clingon:make-command
    :name "add-host"
    :description "add host to the database"
-   :aliases '("a")
    :options (add-host/options)
    :handler #'add-host/handler))
