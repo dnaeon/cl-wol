@@ -35,6 +35,7 @@
    (add-host/command)
    (delete-host/command)
    (init-db/command)
+   (list-hosts/command)
    (print-doc/command)
    (wake/command)
    (zsh-completions/command)))

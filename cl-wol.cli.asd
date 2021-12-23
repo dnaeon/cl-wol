@@ -44,16 +44,15 @@
 	       :clingon
 	       :cl-migratum
 	       :cl-migratum.driver.sql
-	       :cl-migratum.provider.local-path)
+	       :cl-migratum.provider.local-path
+	       :cl-ascii-table)
   :build-operation "program-op"
   :build-pathname "bin/wol"
   :entry-point "cl-wol.cli:main"
   :components ((:module "migrations"
 		:pathname #P"src/cli/migrations/"
 		:components ((:static-file "20211222183337-add_hosts_table.down.sql")
-			     (:static-file "20211222183337-add_hosts_table.up.sql")
-			     (:static-file "20211223111418-add_created_at_column.down.sql")
-			     (:static-file "20211223111418-add_created_at_column.up.sql")))
+			     (:static-file "20211222183337-add_hosts_table.up.sql")))
 	       (:module "cli"
 		:pathname #P"src/cli/"
 		:depends-on ("migrations")
@@ -66,4 +65,5 @@
 			     (:file "init-db")
 			     (:file "add-host")
 			     (:file "delete-host")
+			     (:file "list-hosts")
 			     (:file "main")))))

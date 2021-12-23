@@ -1,7 +1,8 @@
 CREATE TABLE hosts (
        id INTEGER PRIMARY KEY,
-       name CHARACTER VARYING(255),
-       addr CHARACTER VARYING(17)
+       name CHARACTER VARYING(255) NOT NULL,
+       addr CHARACTER VARYING(17) NOT NULL,
+       created_at DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL
 );
 --;;
 CREATE UNIQUE INDEX hosts_name_idx ON hosts(name);
