@@ -36,14 +36,8 @@
 (defun init-db/handler (cmd)
   "Handler for the `init-db' command"
   (let* ((database (clingon:getopt cmd :database))
-	 (db-conn (make-db-conn database))
-	 (provider (cl-migratum.provider.local-path:make-local-path-provider (db-migrations-path)))
-	 (driver (cl-migratum.driver.sql:make-sql-driver provider db-conn)))
-    (cl-migratum:provider-init provider)
-    (cl-migratum:driver-init driver)
-    (cl-migratum:apply-pending driver)
-    (cl-migratum:provider-shutdown provider)
-    (cl-migratum:driver-shutdown driver)))
+	 (db-conn (make-db-conn database)))
+    (migrate-db db-conn)))
 
 (defun init-db/options ()
   "Returns the options of the `init-db' command"
