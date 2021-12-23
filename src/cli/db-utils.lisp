@@ -60,3 +60,7 @@
   "Get the list of columns for a given table"
   (let ((info (table-info db-conn table)))
     (mapcar (lambda (item) (getf item :|name|)) info)))
+
+(defun get-host-from-db (db-conn name)
+  "Fetches the host with the given NAME from the database"
+  (first (db-execute db-conn "SELECT * FROM hosts WHERE name = ?" name)))
