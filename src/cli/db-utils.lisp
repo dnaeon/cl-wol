@@ -46,3 +46,19 @@
     (cl-migratum:apply-pending driver)
     (cl-migratum:provider-shutdown provider)
     (cl-migratum:driver-shutdown driver)))
+
+(defun db-execute (db-conn stmt &rest params)
+  "Execute a given statement against the database"
+  (let ((stmt (cl-dbi:prepare db-conn stmt)))
+    (cl-dbi:with-transaction db-conn
+      (cl-dbi:fetch-all (cl-dbi:execute stmt params)))))
+
+(defun table-info (db-conn table)
+  "Get details about a given table"
+  (let ((query (format nil "PRAGMA table_info(~a)" table)))
+    (db-execute db-conn query)))
+
+(defun table-columns (db-conn table)
+  "Get the list of columns for a given table"
+  (let ((info (table-info db-conn table)))
+    (mapcar (lambda (item) (getf item :|name|)) info)))
