@@ -25,19 +25,12 @@
 
 (in-package :cl-wol.cli)
 
-(defun migrations-path ()
-  "Returns the path to the migration files"
-  (asdf:system-relative-pathname :cl-wol.cli "src/cli/migrations/"))
-
-(defun make-db-conn (db-path)
-  "Creates a new database connection to the given DB-PATH"
-  (cl-dbi:connect :sqlite3 :database-name db-path))
-
 (defun init-db/handler (cmd)
   "Handler for the `init-db' command"
   (let* ((database (clingon:getopt cmd :database))
 	 (db-conn (make-db-conn database)))
-    (migrate-db db-conn)))
+    (migrate-db db-conn)
+    (disconnect-db-conn db-conn)))
 
 (defun init-db/options ()
   "Returns the options of the `init-db' command"

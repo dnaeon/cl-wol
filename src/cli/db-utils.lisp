@@ -43,9 +43,7 @@
 	 (driver (cl-migratum.driver.sql:make-sql-driver provider db-conn)))
     (cl-migratum:provider-init provider)
     (cl-migratum:driver-init driver)
-    (cl-migratum:apply-pending driver)
-    (cl-migratum:provider-shutdown provider)
-    (cl-migratum:driver-shutdown driver)))
+    (cl-migratum:apply-pending driver)))
 
 (defun db-execute (db-conn stmt &rest params)
   "Execute a given statement against the database"
