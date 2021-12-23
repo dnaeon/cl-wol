@@ -51,14 +51,18 @@
   :components ((:module "migrations"
 		:pathname #P"src/cli/migrations/"
 		:components ((:static-file "20211222183337-add_hosts_table.down.sql")
-			     (:static-file "20211222183337-add_hosts_table.up.sql")))
+			     (:static-file "20211222183337-add_hosts_table.up.sql")
+			     (:static-file "20211223111418-add_created_at_column.down.sql")
+			     (:static-file "20211223111418-add_created_at_column.up.sql")))
 	       (:module "cli"
 		:pathname #P"src/cli/"
 		:depends-on ("migrations")
 		:serial t
 		:components ((:file "package")
+			     (:file "db-utils")
 			     (:file "wake")
 			     (:file "zsh-completions")
 			     (:file "print-doc")
 			     (:file "init-db")
+			     (:file "add-host")
 			     (:file "main")))))
