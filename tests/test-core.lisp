@@ -68,3 +68,44 @@
 	       (magic-packet (cl-wol.core:make-magic-packet addr)))
 	  (ok (equalp (cl-wol.core:mac-octets magic-packet) octets)
 	      (format nil "mac-octets match for ~A" addr)))))))
+
+(deftest encode-payload
+  (testing "test encode-payload with known addresses"
+    (ok (equalp (cl-wol.core:encode-payload (cl-wol.core:make-magic-packet "00:01:02:03:04:05"))
+		#(#xFF #xFF #xFF #xFF #xFF #xFF   ;; Header
+		  #x00 #x01 #x02 #x03 #x04 #x05   ;; 1st repetition
+		  #x00 #x01 #x02 #x03 #x04 #x05   ;; 2nd repetition
+		  #x00 #x01 #x02 #x03 #x04 #x05   ;; ...
+		  #x00 #x01 #x02 #x03 #x04 #x05
+		  #x00 #x01 #x02 #x03 #x04 #x05
+		  #x00 #x01 #x02 #x03 #x04 #x05
+		  #x00 #x01 #x02 #x03 #x04 #x05
+		  #x00 #x01 #x02 #x03 #x04 #x05
+		  #x00 #x01 #x02 #x03 #x04 #x05
+		  #x00 #x01 #x02 #x03 #x04 #x05
+		  #x00 #x01 #x02 #x03 #x04 #x05
+		  #x00 #x01 #x02 #x03 #x04 #x05
+		  #x00 #x01 #x02 #x03 #x04 #x05
+		  #x00 #x01 #x02 #x03 #x04 #x05
+		  #x00 #x01 #x02 #x03 #x04 #x05   ;; ...
+		  #x00 #x01 #x02 #x03 #x04 #x05)) ;; 16th repetition
+	"encode-payload matches for 00:01:02:03:04:05")
+    (ok (equalp (cl-wol.core:encode-payload (cl-wol.core:make-magic-packet "aa-bb-cc-dd-ee-ff"))
+		#(#xFF #xFF #xFF #xFF #xFF #xFF   ;; Header
+		  #xAA #xBB #xCC #xDD #xEE #xFF   ;; 1st repetition
+		  #xAA #xBB #xCC #xDD #xEE #xFF   ;; 2nd repetition
+		  #xAA #xBB #xCC #xDD #xEE #xFF   ;; ...
+		  #xAA #xBB #xCC #xDD #xEE #xFF
+		  #xAA #xBB #xCC #xDD #xEE #xFF
+		  #xAA #xBB #xCC #xDD #xEE #xFF
+		  #xAA #xBB #xCC #xDD #xEE #xFF
+		  #xAA #xBB #xCC #xDD #xEE #xFF
+		  #xAA #xBB #xCC #xDD #xEE #xFF
+		  #xAA #xBB #xCC #xDD #xEE #xFF
+		  #xAA #xBB #xCC #xDD #xEE #xFF
+		  #xAA #xBB #xCC #xDD #xEE #xFF
+		  #xAA #xBB #xCC #xDD #xEE #xFF
+		  #xAA #xBB #xCC #xDD #xEE #xFF
+		  #xAA #xBB #xCC #xDD #xEE #xFF   ;; ...
+		  #xAA #xBB #xCC #xDD #xEE #xFF)) ;; 16th repetition
+	"encode-payload matches for aa-bb-cc-dd-ee-ff")))
