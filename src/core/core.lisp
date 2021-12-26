@@ -38,7 +38,7 @@
    :wake
    :invalid-mac-address
    :*mac-regex*
-   :parse-mac-address
+   :parse-hex-bytes
    :magic-packet
    :make-magic-packet))
 (in-package :cl-wol.core)
@@ -72,11 +72,13 @@
   "^([\\da-f]{2})[:-]([\\da-f]{2})[:-]([\\da-f]{2})[:-]([\\da-f]{2})[:-]([\\da-f]{2})[:-]([\\da-f]{2})$"
   "Regex used to parse MAC addresses")
 
-(defun parse-mac-address (mac-address)
-  "Parses a MAC address from the given string identified by MAC-ADDRESS"
+(defun parse-hex-bytes (str)
+  "Parses a string representation of a MAC address or SecureOn password into a list of bytes"
   (cl-ppcre:register-groups-bind (aa bb cc dd ee ff)
-      (*mac-regex* (string-downcase mac-address))
-    (list aa bb cc dd ee ff)))
+      (*mac-regex* (string-downcase str))
+    (mapcar (lambda (item)
+	      (parse-integer item :radix 16))
+	    (list aa bb cc dd ee ff))))
 
 (defclass magic-packet ()
   ((mac-address
@@ -91,12 +93,11 @@
     (format stream "addr=~A" (mac-address object))))
 
 (defmethod mac-octets ((object magic-packet))
-  (map '(vector (unsigned-byte 8)) (lambda (item)
-				     (parse-integer item :radix 16))
-       (parse-mac-address (mac-address object))))
+  (make-array 6 :element-type '(unsigned-byte 8) :initial-contents (parse-hex-bytes (mac-address object))))
 
-(defun make-magic-packet (mac-address)
+(defun make-magic-packet (mac-address &optional password)
   "Creates a new instance of MAGIC-PACKET with the given MAC-ADDRESS"
+  ;; Validate MAC addr
   (unless (cl-ppcre:scan *mac-regex* (string-downcase mac-address))
     (error 'invalid-mac-address :mac-address mac-address))
   (make-instance 'magic-packet :mac-address mac-address))

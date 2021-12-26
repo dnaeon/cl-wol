@@ -40,7 +40,7 @@
 		       "00:0A:FD:15:05:9C"
 		       "90:b9:7d:30:97:9f")))
       (dolist (item items)
-	(ok (cl-wol.core:parse-mac-address item) (format nil "parse mac address ~A" item))
+	(ok (cl-wol.core:parse-hex-bytes item) (format nil "parse mac address ~A" item))
 	(ok (cl-wol.core:make-magic-packet item) (format nil "make-magic-packet with ~A" item)))))
 
   (testing "test unsupported MAC addresses"
@@ -51,7 +51,7 @@
 		       "00 21 dd 92 f6 e3"
 		       "01-02-03-04-XX-YY")))
       (dolist (item items)
-	(ng (cl-wol.core:parse-mac-address item) (format nil "parse ~A" item))
+	(ng (cl-wol.core:parse-hex-bytes item) (format nil "parse ~A" item))
 	(ok (signals (cl-wol.core:make-magic-packet item)) (format nil "make-magic-packet signals with ~A" item))))))
 
 (deftest mac-octets

@@ -31,7 +31,7 @@
 	 (name (clingon:getopt cmd :name))
 	 (address (clingon:getopt cmd :address))
 	 (db-conn (make-db-conn database)))
-    (unless (cl-wol.core:parse-mac-address address)
+    (unless (cl-wol.core:parse-hex-bytes address)
       (error 'cl-wol.core:invalid-mac-address :mac-address address))
     (when (get-host-from-db db-conn name)
       (error "Host with name ~A already exists" name))
