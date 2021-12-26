@@ -90,6 +90,26 @@
 		  #x00 #x01 #x02 #x03 #x04 #x05   ;; ...
 		  #x00 #x01 #x02 #x03 #x04 #x05)) ;; 16th repetition
 	"encode-payload matches for 00:01:02:03:04:05")
+    (ok (equalp (cl-wol.core:encode-payload (cl-wol.core:make-magic-packet "00:01:02:03:04:05" "00-00-00-00-00-00"))
+		#(#xFF #xFF #xFF #xFF #xFF #xFF   ;; Header
+		  #x00 #x01 #x02 #x03 #x04 #x05   ;; 1st repetition
+		  #x00 #x01 #x02 #x03 #x04 #x05   ;; 2nd repetition
+		  #x00 #x01 #x02 #x03 #x04 #x05   ;; ...
+		  #x00 #x01 #x02 #x03 #x04 #x05
+		  #x00 #x01 #x02 #x03 #x04 #x05
+		  #x00 #x01 #x02 #x03 #x04 #x05
+		  #x00 #x01 #x02 #x03 #x04 #x05
+		  #x00 #x01 #x02 #x03 #x04 #x05
+		  #x00 #x01 #x02 #x03 #x04 #x05
+		  #x00 #x01 #x02 #x03 #x04 #x05
+		  #x00 #x01 #x02 #x03 #x04 #x05
+		  #x00 #x01 #x02 #x03 #x04 #x05
+		  #x00 #x01 #x02 #x03 #x04 #x05
+		  #x00 #x01 #x02 #x03 #x04 #x05
+		  #x00 #x01 #x02 #x03 #x04 #x05   ;; ...
+		  #x00 #x01 #x02 #x03 #x04 #x05   ;; 16th repetition
+		  #x00 #x00 #x00 #x00 #x00 #x00)) ;; SecureOn password
+	"encode-payload matches for 00:01:02:03:04:05 with SecureOn password")
     (ok (equalp (cl-wol.core:encode-payload (cl-wol.core:make-magic-packet "aa-bb-cc-dd-ee-ff"))
 		#(#xFF #xFF #xFF #xFF #xFF #xFF   ;; Header
 		  #xAA #xBB #xCC #xDD #xEE #xFF   ;; 1st repetition
@@ -108,4 +128,24 @@
 		  #xAA #xBB #xCC #xDD #xEE #xFF
 		  #xAA #xBB #xCC #xDD #xEE #xFF   ;; ...
 		  #xAA #xBB #xCC #xDD #xEE #xFF)) ;; 16th repetition
-	"encode-payload matches for aa-bb-cc-dd-ee-ff")))
+	"encode-payload matches for aa-bb-cc-dd-ee-ff")
+    (ok (equalp (cl-wol.core:encode-payload (cl-wol.core:make-magic-packet "aa-bb-cc-dd-ee-ff" "01-02-03-04-05-06"))
+		#(#xFF #xFF #xFF #xFF #xFF #xFF   ;; Header
+		  #xAA #xBB #xCC #xDD #xEE #xFF   ;; 1st repetition
+		  #xAA #xBB #xCC #xDD #xEE #xFF   ;; 2nd repetition
+		  #xAA #xBB #xCC #xDD #xEE #xFF   ;; ...
+		  #xAA #xBB #xCC #xDD #xEE #xFF
+		  #xAA #xBB #xCC #xDD #xEE #xFF
+		  #xAA #xBB #xCC #xDD #xEE #xFF
+		  #xAA #xBB #xCC #xDD #xEE #xFF
+		  #xAA #xBB #xCC #xDD #xEE #xFF
+		  #xAA #xBB #xCC #xDD #xEE #xFF
+		  #xAA #xBB #xCC #xDD #xEE #xFF
+		  #xAA #xBB #xCC #xDD #xEE #xFF
+		  #xAA #xBB #xCC #xDD #xEE #xFF
+		  #xAA #xBB #xCC #xDD #xEE #xFF
+		  #xAA #xBB #xCC #xDD #xEE #xFF
+		  #xAA #xBB #xCC #xDD #xEE #xFF   ;; ...
+		  #xAA #xBB #xCC #xDD #xEE #xFF   ;; 16th repetition
+		  #x01 #x02 #x03 #x04 #x05 #x06)) ;; SecureOn password
+	"encode-payload matches for aa-bb-cc-dd-ee-ff with SecureOn password")))
