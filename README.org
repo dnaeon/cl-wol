@@ -1,3 +1,230 @@
 * cl-wol
 
-Wake On Lan system for Common Lisp
+=cl-wol= is a Common Lisp system and CLI application, which can power
+on remote systems using [[https://en.wikipedia.org/wiki/Wake-on-LAN][Wake on LAN (WoL)]].
+
+* Requirements
+
+- [[https://www.quicklisp.org/beta/][Quicklisp]]
+
+* Installation
+
+=cl-wol= is not yet in Quicklisp, so in order to install it you will need to
+clone the repo and add it to your [[https://www.quicklisp.org/beta/faq.html][Quicklisp local-projects]].
+
+#+begin_src shell
+  cd ~/quicklisp/local-projects
+  git clone https://github.com/dnaeon/cl-wol.git
+#+end_src
+
+If you are installing the CLI application, you will also need a recent
+version of [[https://github.com/dnaeon/clingon][clingon]], as the one found in Quicklisp is not yet updated
+to the latest release.
+
+* Systems
+
+=cl-wol= provides the following systems.
+
+The =cl-wol.core= system provides the core functionallity for powering
+on remote systems using [[https://en.wikipedia.org/wiki/Wake-on-LAN][Wake on LAN (WoL)]] by broadcasting a magic
+packet to a destination port and address.
+
+The =cl-wol.test= system provides the test suite of =cl-wol.core=.
+
+The =cl-wol.cli= system provides a command-line interface application,
+built on top of =cl-wol.core=, which comes with support for looking up
+hosts and their MAC addresses from a local SQLite database.
+
+* Usage
+
+The following formats of MAC addresses are supported by =cl-wol=.
+
+- =AA:BB:CC:DD:EE:FF=
+- =AA-BB-CC-DD-EE-FF=
+
+** API
+
+The following section describes how to use the =cl-wol.core= system.
+
+First, start your Lisp REPL and load the system.
+
+#+begin_src lisp
+  CL-USER> (ql:quickload :cl-wol.core)
+  To load "cl-wol.core":
+    Load 1 ASDF system:
+      cl-wol.core
+  ; Loading "cl-wol.core"
+
+  (:CL-WOL.CORE)
+#+end_src
+
+In order to wake a remote system identified by a given MAC address we
+need to create a new instance of =CL-WOL.CORE:MAGIC-PACKET=.
+
+#+begin_src lisp
+  CL-USER> (defparameter *magic-packet*
+	     (cl-wol.core:make-magic-packet "aa:bb:cc:dd:ee:ff"))
+  *MAGIC-PACKET*
+#+end_src
+
+Now that we have a magic packet we can broadcast it to a given port
+and address. In order to do that we will use the =CL-WOL.CORE:WAKE=
+generic function. The following example broadcasts the magic packet
+to =255.255.255.255= on port =7=.
+
+#+begin_src lisp
+  CL-USER> (cl-wol.core:wake *magic-packet* "255.255.255.255" 7)
+  T
+#+end_src
+
+** CLI
+
+You can build the CLI application of =cl-wol= by executing the
+following command.
+
+#+begin_src shell
+  make cli
+#+end_src
+
+The default Lisp implementation is SBCL, so if you are using a
+different implementation simply pass the =LISP= environment variable
+before invoking the =cli= target. This command builds the CLI
+application using Clozure Common Lisp for example.
+
+#+begin_src shell
+  LISP=ccl make cli
+#+end_src
+
+Once the app is built you can find the executable in the =bin=
+directory of the =cl-wol.cli= system, which you can later install
+somewhere in your =PATH=, e.g.
+
+#+begin_src shell
+  sudo install ./bin/wol /usr/local/bin
+#+end_src
+
+You can also generate Zsh completions for the CLI application by
+executing the =wol zsh-completions= sub-command, e.g.
+
+#+begin_src shell
+  wol zsh-completions > ~/.zsh-completions/_wol
+#+end_src
+
+You can wake up remote systems by using the =wol wake=
+sub-command. Multiple MAC addresses can be specified on the
+command-line as separate arguments, e.g.
+
+#+begin_src shell
+  $ wol wake 00:01:02:03:04:05 aa:bb:cc:dd:ee:ff
+  Waking up 00:01:02:03:04:05 ...
+  Waking up aa:bb:cc:dd:ee:ff ...
+#+end_src
+
+Instead of remembering MAC addresses by heart the =cl-wol= CLI
+application supports storing MAC addresses in a local SQLite database,
+which can be looked up by the various sub-commands.
+
+First, we need to initialize a new database file using the =wol
+init-db= sub-command.
+
+#+begin_src shell
+  $ wol init-db --database wol.db
+   <INFO> [14:25:36] cl-migratum.core core.lisp (apply-pending) -
+    Found 1 pending migration(s) to be applied
+   <INFO> [14:25:36] cl-migratum.core core.lisp (apply-and-register) -
+    Applying migration 20211222183337 - add_hosts_table
+#+end_src
+
+Once the database is initialized you can add hosts to it. For example:
+
+#+begin_src shell
+  wol add-host --database wol.db --address aa:bb:cc:dd:ee:ff --name box-01
+  wol add-host --database wol.db --address 01:02:03:04:05:06 --name box-02
+#+end_src
+
+Listing the hosts from the database is done via the =wol list-hosts=
+sub-command.
+
+#+begin_src shell
+  $ wol list-hosts --database wol.db
+  +----+--------+-------------------+---------------------+
+  | ID | NAME   | ADDR              | CREATED AT          |
+  +----+--------+-------------------+---------------------+
+  |  1 | box-01 | aa:bb:cc:dd:ee:ff | 2021-12-26 14:27:19 |
+  |  2 | box-02 | 01:02:03:04:05:06 | 2021-12-26 14:27:30 |
+  +----+--------+-------------------+---------------------+
+#+end_src
+
+You can now wake up hosts by referring to their names. In order to do
+that use the =--database= and =--name= options of the =wol wake=
+sub-command. The =--name= option can be repeated multiple times in
+order to refer to different hosts, e.g.
+
+#+begin_src shell
+  $ wol wake --database wol.db --name box-01 --name box-02
+  Waking up 01:02:03:04:05:06 ...
+  Waking up aa:bb:cc:dd:ee:ff ...
+#+end_src
+
+Deleting hosts from the database is done via the =wol delete-host=
+sub-command, e.g.
+
+#+begin_src shell
+  wol delete-host --database wol.db box-01 box-02
+#+end_src
+
+* Tests
+
+Tests are provided as part of the =:cl-wol.test= system.
+
+In order to run the tests you can evaluate the following expressions
+from your Lisp REPL.
+
+#+begin_src lisp
+  CL-USER> (ql:quickload :cl-wol.test)
+  CL-USER> (asdf:test-system :cl-wol.test)
+#+end_src
+
+Or you can run the tests using the =test= target instead, e.g.
+
+#+begin_src shell
+  make test
+#+end_src
+
+Here's how to run the tests against SBCL, CCL and ECL for example.
+
+#+begin_src shell
+  for lisp in sbcl ccl ecl; do
+      echo "Running tests using ${lisp} ..."
+      LISP=${lisp} make test > ${lisp}-tests.out
+  done
+#+end_src
+
+* Docker Images
+
+You can build and run a Docker image of the CLI application by
+executing the following commands.
+
+#+begin_src shell
+  docker build -t cl-wol.cli:latest -f Dockerfile .
+#+end_src
+
+A separate image can be built for running the test suite of =cl-wol=.
+
+#+begin_src shell
+  docker build -t cl-wol.test:latest -f Dockerfile.tests .
+  docker run --rm cl-wol.test:latest
+#+end_src
+
+* Contributing
+
+=cl-wol= is hosted on [[https://github.com/dnaeon/cl-wol][Github]]. Please contribute by reporting issues,
+suggesting features or by sending patches using pull requests.
+
+* License
+
+This project is Open Source and licensed under the [[http://opensource.org/licenses/BSD-2-Clause][BSD License]].
+
+* Authors
+
+- Marin Atanasov Nikolov <dnaeon@gmail.com>
