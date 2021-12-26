@@ -35,8 +35,10 @@
    :mac-address
    :mac-octets
    :encode-payload
+   :secureon-password
    :wake
    :invalid-mac-address
+   :invalid-password
    :*mac-regex*
    :parse-hex-bytes
    :magic-packet
@@ -50,6 +52,9 @@
 (defgeneric mac-octets (object)
   (:documentation "Returns a vector of bytes representing the MAC
   address associated with the OBJECT"))
+
+(defgeneric secureon-password (object)
+  (:documentation "Returns the SecureOn password associated with the OBJECT"))
 
 (defgeneric encode-payload (object)
   (:documentation "Encodes the OBJECT and returns a vector of bytes
@@ -68,6 +73,15 @@
 	     (format stream "Invalid MAC address ~A" (mac-address condition))))
   (:documentation "A condition which is signalled upon an invalid MAC address"))
 
+(define-condition invalid-password (simple-error)
+  ((password
+    :initarg :password
+    :initform (error "Must specify password")
+    :reader secureon-password))
+  (:report (lambda (condition stream)
+	     (format stream "Invalid SecureOn password ~A" (secureon-password condition))))
+  (:documentation "A condition which is signalled upon invalid SecureOn password"))
+
 (defparameter *mac-regex*
   "^([\\da-f]{2})[:-]([\\da-f]{2})[:-]([\\da-f]{2})[:-]([\\da-f]{2})[:-]([\\da-f]{2})[:-]([\\da-f]{2})$"
   "Regex used to parse MAC addresses")
@@ -85,7 +99,12 @@
     :initarg :mac-address
     :initform (error "Must specify MAC address")
     :accessor mac-address
-    :documentation "Destination MAC address"))
+    :documentation "Destination MAC address")
+   (password
+    :initarg :password
+    :initform nil
+    :reader secureon-password
+    :documentation "Optional SecureOn password"))
   (:documentation "A class which represents the Magic Packet used to wake remote systems"))
 
 (defmethod print-object ((object magic-packet) stream)
@@ -100,11 +119,16 @@
   ;; Validate MAC addr
   (unless (cl-ppcre:scan *mac-regex* (string-downcase mac-address))
     (error 'invalid-mac-address :mac-address mac-address))
+  ;; Validate SecureOn password
+  (when (and password (not (parse-hex-bytes password)))
+    (error 'invalid-password :password password))
   (make-instance 'magic-packet :mac-address mac-address))
 
 (defmethod encode-payload ((object magic-packet))
   ;; The payload represents 6 bytes of #xFF followed by 16 repetitions
   ;; of the MAC address. Total length of the payload is 102 bytes.
+  ;; If we have SecureOn password then we have another 6 bytes to
+  ;; represent the password itself, resulting in 108 bytes in total.
   (let ((payload nil))
     ;; Encode header
     (loop :repeat 6 :do
@@ -113,7 +137,15 @@
     (loop :repeat 16 :do
       (loop :for byte :across (mac-octets object) :do
 	(push byte payload)))
-    (make-array 102 :element-type '(unsigned-byte 8) :initial-contents (nreverse payload))))
+    ;; Encode SecureOn password
+    (when (secureon-password object)
+      (loop :for byte :across (secureon-password object) :do
+	(push byte payload)))
+    ;; Validate and return payload
+    (let ((payload-length (length payload)))
+      (unless (or (= payload-length 102) (= payload-length 108))
+	(error "Invalid payload generated"))
+      (make-array payload-length :element-type '(unsigned-byte 8) :initial-contents (nreverse payload)))))
 
 (defmethod wake ((object magic-packet) address port)
   (let ((payload (encode-payload object))
