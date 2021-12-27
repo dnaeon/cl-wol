@@ -160,8 +160,9 @@
       (make-array payload-length :element-type '(unsigned-byte 8) :initial-contents (nreverse payload)))))
 
 (defmethod wake ((object magic-packet) address port)
-  (let ((payload (encode-payload object))
-	(socket (usocket:socket-connect nil nil :protocol :datagram :element-type '(unsigned-byte 8))))
+  (let* ((payload (encode-payload object))
+	 (size (length payload))
+	 (socket (usocket:socket-connect nil nil :protocol :datagram :element-type '(unsigned-byte 8))))
     (setf (usocket:socket-option socket :broadcast) t)
-    (usocket:socket-send socket payload nil :host address :port port)
+    (usocket:socket-send socket payload size :host address :port port)
     (usocket:socket-close socket)))
