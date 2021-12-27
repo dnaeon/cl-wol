@@ -59,11 +59,23 @@ First, start your Lisp REPL and load the system.
 #+end_src
 
 In order to wake a remote system identified by a given MAC address we
-need to create a new instance of =CL-WOL.CORE:MAGIC-PACKET=.
+first need to create a new instance of =CL-WOL.CORE:MAGIC-PACKET=.
 
 #+begin_src lisp
   CL-USER> (defparameter *magic-packet*
 	     (cl-wol.core:make-magic-packet "aa:bb:cc:dd:ee:ff"))
+  *MAGIC-PACKET*
+#+end_src
+
+The =CL-WOL.CORE:MAKE-MAGIC-PACKET= function accepts an optional
+second argument, which represents a =SecureOn= password. The format of
+the =SecureOn= password is the same as the one for MAC addresses. For
+example, if you need to create a magic packet with =SecureOn= password
+appended to the payload you can evaluate the following expression.
+
+#+begin_src lisp
+  CL-USER> (defparameter *magic-packet*
+	     (cl-wol.core:make-magic-packet "aa:bb:cc:dd:ee:ff" "00-00-00-00-00-00"))
   *MAGIC-PACKET*
 #+end_src
 
