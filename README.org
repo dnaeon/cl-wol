@@ -91,6 +91,8 @@ to =255.255.255.255= on port =7=.
 
 ** CLI
 
+[[./images/wol-demo.gif]]
+
 You can build the CLI application of =cl-wol= by executing the
 following command.
 
