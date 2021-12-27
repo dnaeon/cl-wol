@@ -102,9 +102,10 @@
   "Parses a string representation of a MAC address or SecureOn password into a list of bytes"
   (cl-ppcre:register-groups-bind (aa bb cc dd ee ff)
       (*mac-regex* (string-downcase str))
-    (mapcar (lambda (item)
-	      (parse-integer item :radix 16))
-	    (list aa bb cc dd ee ff))))
+    (map '(vector (unsigned-byte 8))
+	 (lambda (item)
+	   (parse-integer item :radix 16))
+	 (list aa bb cc dd ee ff))))
 
 (defclass magic-packet ()
   ((mac-address
