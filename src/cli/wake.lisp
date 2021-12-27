@@ -100,4 +100,7 @@ options and arguments from the command-line"
    :description "wakes up remote systems"
    :usage "[options] MAC-ADDRESS ..."
    :handler #'wake/handler
-   :options (wake/options)))
+   :options (wake/options)
+   :examples '(("Wake up a single host:" . "wol wake 00:01:02:03:05")
+	       ("Wake up multiple hosts:" . "wol wake 00:01:02:03:04:05 aa:bb:cc:dd:ee:ff")
+	       ("Wake up hosts by name from db:" . "wol wake --database wol.db --name box-01 --name box-02"))))

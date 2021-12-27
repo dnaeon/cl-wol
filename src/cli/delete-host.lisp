@@ -52,4 +52,5 @@
    :description "delete host(s) from the database"
    :usage "NAME ..."
    :options (delete-host/options)
-   :handler #'delete-host/handler))
+   :handler #'delete-host/handler
+   :examples '(("Delete hosts from the db:" . "wol delete-host --database wol.db box-01 box-02"))))

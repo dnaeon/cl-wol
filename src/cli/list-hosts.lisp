@@ -70,4 +70,6 @@
    :name "list-hosts"
    :description "displays the hosts from the database"
    :options (list-hosts/options)
-   :handler #'list-hosts/handler))
+   :handler #'list-hosts/handler
+   :examples '(("List hosts from database:" . "wol list-hosts --database wol.db")
+	       ("List 50 hosts at max:" . "wol list-hosts --database wol.db --limit 50"))))

@@ -49,4 +49,5 @@
    :name "init-db"
    :description "init local database file"
    :options (init-db/options)
-   :handler #'init-db/handler))
+   :handler #'init-db/handler
+   :examples '(("Initialize a new database:" . "wol init-db --database wol.db"))))

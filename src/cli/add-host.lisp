@@ -66,4 +66,5 @@
    :name "add-host"
    :description "add host to the database"
    :options (add-host/options)
-   :handler #'add-host/handler))
+   :handler #'add-host/handler
+   :examples '(("Add a new host:" . "wol add-host --database wol.db --name box-01 --address 00:01:02:03:04:05"))))
