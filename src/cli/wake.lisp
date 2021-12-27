@@ -52,9 +52,12 @@ options and arguments from the command-line"
   (let ((hosts (get-hosts-to-wake cmd)))
     (unless hosts
       (clingon:print-usage-and-exit cmd t))
-    (let ((address (clingon:getopt cmd :address))
-	  (port (clingon:getopt cmd :port))
-	  (items (mapcar #'cl-wol.core:make-magic-packet hosts)))
+    (let* ((address (clingon:getopt cmd :address))
+	   (port (clingon:getopt cmd :port))
+	   (password (clingon:getopt cmd :password))
+	   (items (mapcar (lambda (host)
+			    (cl-wol.core:make-magic-packet host password))
+			  hosts)))
       (dolist (item items)
 	(format t "Waking up ~A ...~&" (cl-wol.core:mac-address item))
 	(cl-wol.core:wake item address port)))))
@@ -74,6 +77,10 @@ options and arguments from the command-line"
 			:long-name "port"
 			:initial-value 7
 			:key :port)
+   (clingon:make-option :string
+			:description "optional SecureOn password to send"
+			:long-name "password"
+			:key :password)
    (clingon:make-option :list
 			:description "host to lookup from the database and wake"
 			:short-name #\n
