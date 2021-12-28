@@ -76,8 +76,8 @@
   password"))
 
 (define-condition invalid-mac-address (simple-error)
-  ((mac-address
-    :initarg :mac-address
+  ((address
+    :initarg :address
     :initform (error "Must specify MAC address")
     :reader mac-address))
   (:report (lambda (condition stream)
