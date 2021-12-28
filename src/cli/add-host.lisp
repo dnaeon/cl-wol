@@ -28,9 +28,9 @@
 (defun add-host/handler (cmd)
   "Handler for the `add-host' command"
   (let* ((database (clingon:getopt cmd :database))
-	 (name (clingon:getopt cmd :name))
-	 (address (clingon:getopt cmd :address))
-	 (db-conn (make-db-conn database)))
+         (name (clingon:getopt cmd :name))
+         (address (clingon:getopt cmd :address))
+         (db-conn (make-db-conn database)))
     (unless (cl-wol.core:parse-hex-bytes address)
       (error 'cl-wol.core:invalid-mac-address :mac-address address))
     (when (get-host-from-db db-conn name)
@@ -41,24 +41,24 @@
   "Returns the options of the `add-host' command"
   (list
    (clingon:make-option :filepath
-			:description "path to the database file"
-			:short-name #\d
-			:long-name "database"
-			:env-vars '("DATABASE")
-			:required t
-			:key :database)
+                        :description "path to the database file"
+                        :short-name #\d
+                        :long-name "database"
+                        :env-vars '("DATABASE")
+                        :required t
+                        :key :database)
    (clingon:make-option :string
-			:description "name of the host to add"
-			:short-name #\n
-			:long-name "name"
-			:required t
-			:key :name)
+                        :description "name of the host to add"
+                        :short-name #\n
+                        :long-name "name"
+                        :required t
+                        :key :name)
    (clingon:make-option :string
-			:description "MAC address of the host"
-			:short-name #\a
-			:long-name "address"
-			:required t
-			:key :address)))
+                        :description "MAC address of the host"
+                        :short-name #\a
+                        :long-name "address"
+                        :required t
+                        :key :address)))
 
 (defun add-host/command ()
   "Returns the command for adding hosts to the database file"

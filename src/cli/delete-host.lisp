@@ -30,7 +30,7 @@
   (unless (clingon:command-arguments cmd)
     (clingon:print-usage-and-exit cmd t))
   (let* ((database (clingon:getopt cmd :database))
-	 (db-conn (make-db-conn database)))
+         (db-conn (make-db-conn database)))
     (dolist (name (clingon:command-arguments cmd))
       (db-execute db-conn "DELETE FROM hosts WHERE name = ?" name))))
 
@@ -38,12 +38,12 @@
   "Returns the options of the `delete-host' command"
   (list
    (clingon:make-option :filepath
-			:description "path to the database file"
-			:short-name #\d
-			:long-name "database"
-			:env-vars '("DATABASE")
-			:required t
-			:key :database)))
+                        :description "path to the database file"
+                        :short-name #\d
+                        :long-name "database"
+                        :env-vars '("DATABASE")
+                        :required t
+                        :key :database)))
 
 (defun delete-host/command ()
   "Returns the command for deleting hosts from the database file"

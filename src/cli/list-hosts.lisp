@@ -28,16 +28,16 @@
 (defun list-hosts/handler (cmd)
   "Handler for the `list-hosts' command"
   (let* ((database (clingon:getopt cmd :database))
-	 (offset (clingon:getopt cmd :offset))
-	 (limit (clingon:getopt cmd :limit))
-	 (db-conn (make-db-conn database))
-	 (table (ascii-table:make-table '("ID" "NAME" "ADDR" "CREATED AT")))
-	 (items (db-execute db-conn "SELECT * FROM hosts LIMIT ? OFFSET ?" limit offset)))
+         (offset (clingon:getopt cmd :offset))
+         (limit (clingon:getopt cmd :limit))
+         (db-conn (make-db-conn database))
+         (table (ascii-table:make-table '("ID" "NAME" "ADDR" "CREATED AT")))
+         (items (db-execute db-conn "SELECT * FROM hosts LIMIT ? OFFSET ?" limit offset)))
     (dolist (item items)
       (ascii-table:add-row table (list (getf item :|id|)
-				       (getf item :|name|)
-				       (getf item :|addr|)
-				       (getf item :|created_at|))))
+                                       (getf item :|name|)
+                                       (getf item :|addr|)
+                                       (getf item :|created_at|))))
     (when items
       (ascii-table:display table))))
 
@@ -45,24 +45,24 @@
   "Returns the options of the `list-hosts' command"
   (list
    (clingon:make-option :filepath
-			:description "path to the database file"
-			:short-name #\d
-			:long-name "database"
-			:env-vars '("DATABASE")
-			:required t
-			:key :database)
+                        :description "path to the database file"
+                        :short-name #\d
+                        :long-name "database"
+                        :env-vars '("DATABASE")
+                        :required t
+                        :key :database)
    (clingon:make-option :integer
-			:description "offset to use when fetching rows"
-			:short-name #\o
-			:long-name "offset"
-			:initial-value 0
-			:key :offset)
+                        :description "offset to use when fetching rows"
+                        :short-name #\o
+                        :long-name "offset"
+                        :initial-value 0
+                        :key :offset)
    (clingon:make-option :integer
-			:description "max number of rows to fetch"
-			:short-name #\l
-			:long-name "limit"
-			:initial-value 20
-			:key :limit)))
+                        :description "max number of rows to fetch"
+                        :short-name #\l
+                        :long-name "limit"
+                        :initial-value 20
+                        :key :limit)))
 
 (defun list-hosts/command ()
   "Returns the command for listing hosts from the database file"
@@ -72,4 +72,4 @@
    :options (list-hosts/options)
    :handler #'list-hosts/handler
    :examples '(("List hosts from database:" . "wol list-hosts --database wol.db")
-	       ("List 50 hosts at max:" . "wol list-hosts --database wol.db --limit 50"))))
+               ("List 50 hosts at max:" . "wol list-hosts --database wol.db --limit 50"))))

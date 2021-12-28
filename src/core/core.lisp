@@ -86,7 +86,7 @@
     :initform (error "Must specify MAC address")
     :reader mac-address))
   (:report (lambda (condition stream)
-	     (format stream "Invalid MAC address ~A" (mac-address condition))))
+             (format stream "Invalid MAC address ~A" (mac-address condition))))
   (:documentation "A condition which is signalled upon an invalid MAC address"))
 
 (define-condition invalid-password (simple-error)
@@ -95,7 +95,7 @@
     :initform (error "Must specify password")
     :reader secureon-password))
   (:report (lambda (condition stream)
-	     (format stream "Invalid SecureOn password ~A" (secureon-password condition))))
+             (format stream "Invalid SecureOn password ~A" (secureon-password condition))))
   (:documentation "A condition which is signalled upon invalid SecureOn password"))
 
 (define-condition invalid-payload (simple-error)
@@ -104,8 +104,8 @@
     :initform (error "Must specify payload")
     :reader payload))
   (:report (lambda (condition stream)
-	     (declare (ignore condition))
-	     (format stream "Invalid payload generated")))
+             (declare (ignore condition))
+             (format stream "Invalid payload generated")))
   (:documentation "A condition which is signalled when invalid payload is generated"))
 
 (defparameter *mac-regex*
@@ -117,9 +117,9 @@
   (cl-ppcre:register-groups-bind (aa bb cc dd ee ff)
       (*mac-regex* (string-downcase str))
     (map '(vector (unsigned-byte 8))
-	 (lambda (item)
-	   (parse-integer item :radix 16))
-	 (list aa bb cc dd ee ff))))
+         (lambda (item)
+           (parse-integer item :radix 16))
+         (list aa bb cc dd ee ff))))
 
 (defclass magic-packet ()
   ((address
@@ -142,16 +142,16 @@
   (with-output-to-string (s)
     (loop :for (byte . rest) :on (map 'list #'identity (mac-octets object)) :do
       (if rest
-	  (format s "~2,'0x:" byte)
-	  (format s "~2,'0x" byte)))))
+          (format s "~2,'0x:" byte)
+          (format s "~2,'0x" byte)))))
 
 (defmethod make-magic-packet ((address string) &optional password)
   (check-type password (or null string (simple-octet-vector 6)))
   (let ((addr-octets (parse-hex-bytes address))
-	(pass-octets (etypecase password
-		       (string (parse-hex-bytes password))
-		       ((simple-octet-vector 6) password)
-		       (null nil))))
+        (pass-octets (etypecase password
+                       (string (parse-hex-bytes password))
+                       ((simple-octet-vector 6) password)
+                       (null nil))))
     ;; Validate MAC address
     (unless addr-octets
       (error 'invalid-mac-address :address address))
@@ -177,21 +177,21 @@
     ;; Encode MAC address
     (loop :repeat 16 :do
       (loop :for byte :across (mac-octets object) :do
-	(push byte payload)))
+        (push byte payload)))
     ;; Encode SecureOn password
     (when (secureon-password object)
       (loop :for byte :across (secureon-password object) :do
-	(push byte payload)))
+        (push byte payload)))
     ;; Validate and return payload
     (let ((payload-length (length payload)))
       (unless (or (= payload-length 102) (= payload-length 108))
-	(error 'invalid-payload :payload payload))
+        (error 'invalid-payload :payload payload))
       (make-array payload-length :element-type '(unsigned-byte 8) :initial-contents (nreverse payload)))))
 
 (defmethod wake ((object magic-packet) address port)
   (let* ((payload (encode-payload object))
-	 (size (length payload))
-	 (socket (usocket:socket-connect nil nil :protocol :datagram :element-type '(unsigned-byte 8))))
+         (size (length payload))
+         (socket (usocket:socket-connect nil nil :protocol :datagram :element-type '(unsigned-byte 8))))
     (setf (usocket:socket-option socket :broadcast) t)
     (usocket:socket-send socket payload size :host address :port port)
     (usocket:socket-close socket)))

@@ -36,12 +36,12 @@
   :maintainer "Marin Atanasov Nikolov <dnaeon@gmail.com>"
   :license "BSD 2-Clause"
   :long-description #.(uiop:read-file-string
-		       (uiop:subpathname *load-pathname* "README.org"))
+                       (uiop:subpathname *load-pathname* "README.org"))
   :homepage "https://github.com/dnaeon/cl-wol"
   :bug-tracker "https://github.com/dnaeon/cl-wol"
   :source-control "https://github.com/dnaeon/cl-wol"
   :depends-on (:cl-wol.core :rove)
   :components ((:module "tests"
-		:pathname #P"tests/"
-		:components ((:file "test-core"))))
+                :pathname #P"tests/"
+                :components ((:file "test-core"))))
   :perform (test-op (op c) (uiop:symbol-call :rove :run-suite :cl-wol.test)))
