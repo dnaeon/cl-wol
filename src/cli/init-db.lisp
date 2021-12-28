@@ -28,7 +28,7 @@
 (defun init-db/handler (cmd)
   "Handler for the `init-db' command"
   (let* ((database (clingon:getopt cmd :database))
-	 (db-conn (make-db-conn database)))
+         (db-conn (make-db-conn database)))
     (migrate-db db-conn)
     (disconnect-db-conn db-conn)))
 
@@ -36,12 +36,12 @@
   "Returns the options of the `init-db' command"
   (list
    (clingon:make-option :filepath
-			:description "path to the database file"
-			:short-name #\d
-			:long-name "database"
-			:env-vars '("DATABASE")
-			:required t
-			:key :database)))
+                        :description "path to the database file"
+                        :short-name #\d
+                        :long-name "database"
+                        :env-vars '("DATABASE")
+                        :required t
+                        :key :database)))
 
 (defun init-db/command ()
   "Returns the command for initializing the database"

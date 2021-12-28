@@ -29,22 +29,22 @@
   "Returns the list of MAC addresses to wake up based on the provided
 options and arguments from the command-line"
   (let ((names (clingon:getopt cmd :names))
-	(database (clingon:getopt cmd :database))
-	(free-args (clingon:command-arguments cmd))
-	(hosts-from-db nil))
+        (database (clingon:getopt cmd :database))
+        (free-args (clingon:command-arguments cmd))
+        (hosts-from-db nil))
     ;; In order to wake up hosts by name we need a database
     (when (and names (not database))
       (error "No database file specified"))
     ;; We have hosts to lookup from the database
     (when (and names database)
       (let ((db-conn (make-db-conn database)))
-	(setf hosts-from-db (reduce (lambda (acc name)
-				      (let ((host (get-host-from-db db-conn name)))
-					(if host
-					    (cons (getf host :|addr|) acc)
-					    acc)))
-				    names
-				    :initial-value nil))))
+        (setf hosts-from-db (reduce (lambda (acc name)
+                                      (let ((host (get-host-from-db db-conn name)))
+                                        (if host
+                                            (cons (getf host :|addr|) acc)
+                                            acc)))
+                                    names
+                                    :initial-value nil))))
     (concatenate 'list free-args hosts-from-db)))
 
 (defun wake/handler (cmd)
@@ -53,45 +53,45 @@ options and arguments from the command-line"
     (unless hosts
       (clingon:print-usage-and-exit cmd t))
     (let* ((address (clingon:getopt cmd :address))
-	   (port (clingon:getopt cmd :port))
-	   (password (clingon:getopt cmd :password))
-	   (items (mapcar (lambda (host)
-			    (cl-wol.core:make-magic-packet host password))
-			  hosts)))
+           (port (clingon:getopt cmd :port))
+           (password (clingon:getopt cmd :password))
+           (items (mapcar (lambda (host)
+                            (cl-wol.core:make-magic-packet host password))
+                          hosts)))
       (dolist (item items)
-	(format t "Waking up ~A ...~&" (cl-wol.core:mac-address item))
-	(cl-wol.core:wake item address port)))))
+        (format t "Waking up ~A ...~&" (cl-wol.core:mac-address item))
+        (cl-wol.core:wake item address port)))))
 
 (defun wake/options ()
   "Returns the options for the `wake' command"
   (list
    (clingon:make-option :string
-			:description "broadcast address to send the magic packet to"
-			:short-name #\a
-			:long-name "address"
-			:initial-value "255.255.255.255"
-			:key :address)
+                        :description "broadcast address to send the magic packet to"
+                        :short-name #\a
+                        :long-name "address"
+                        :initial-value "255.255.255.255"
+                        :key :address)
    (clingon:make-option :integer
-			:description "UDP port to send broadcast packet to"
-			:short-name #\p
-			:long-name "port"
-			:initial-value 7
-			:key :port)
+                        :description "UDP port to send broadcast packet to"
+                        :short-name #\p
+                        :long-name "port"
+                        :initial-value 7
+                        :key :port)
    (clingon:make-option :string
-			:description "optional SecureOn password to send"
-			:long-name "password"
-			:key :password)
+                        :description "optional SecureOn password to send"
+                        :long-name "password"
+                        :key :password)
    (clingon:make-option :list
-			:description "host to lookup from the database and wake"
-			:short-name #\n
-			:long-name "name"
-			:key :names)
+                        :description "host to lookup from the database and wake"
+                        :short-name #\n
+                        :long-name "name"
+                        :key :names)
    (clingon:make-option :filepath
-			:description "path to the database file"
-			:short-name #\d
-			:long-name "database"
-			:env-vars '("DATABASE")
-			:key :database)))
+                        :description "path to the database file"
+                        :short-name #\d
+                        :long-name "database"
+                        :env-vars '("DATABASE")
+                        :key :database)))
 
 (defun wake/command ()
   "Returns the command for waking up remote systems"
@@ -102,5 +102,5 @@ options and arguments from the command-line"
    :handler #'wake/handler
    :options (wake/options)
    :examples '(("Wake up a single host:" . "wol wake 00:01:02:03:05")
-	       ("Wake up multiple hosts:" . "wol wake 00:01:02:03:04:05 aa:bb:cc:dd:ee:ff")
-	       ("Wake up hosts by name from db:" . "wol wake --database wol.db --name box-01 --name box-02"))))
+               ("Wake up multiple hosts:" . "wol wake 00:01:02:03:04:05 aa:bb:cc:dd:ee:ff")
+               ("Wake up hosts by name from db:" . "wol wake --database wol.db --name box-01 --name box-02"))))
