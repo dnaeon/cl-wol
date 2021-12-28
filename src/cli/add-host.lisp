@@ -30,12 +30,11 @@
   (let* ((database (clingon:getopt cmd :database))
          (name (clingon:getopt cmd :name))
          (address (clingon:getopt cmd :address))
-         (db-conn (make-db-conn database)))
-    (unless (cl-wol.core:parse-hex-bytes address)
-      (error 'cl-wol.core:invalid-mac-address :address address))
+         (db-conn (make-db-conn database))
+         (magic-packet (cl-wol.core:make-magic-packet address)))
     (when (get-host-from-db db-conn name)
       (error "Host with name ~A already exists" name))
-    (db-execute db-conn "INSERT INTO hosts (name, addr) VALUES (?, ?)" name address)))
+    (db-execute db-conn "INSERT INTO hosts (name, addr) VALUES (?, ?)" name (cl-wol.core:mac-address magic-packet))))
 
 (defun add-host/options ()
   "Returns the options of the `add-host' command"
