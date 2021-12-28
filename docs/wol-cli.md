@@ -204,7 +204,7 @@ wol wake [options] MAC-ADDRESS ...
 
 ``` shell
       --help              display usage information and exit
-      --password <VALUE>  optional SecureOn password to send
+      --password <VALUE>  optional SecureOn password to send [env: $SECUREON_PASSWORD]
       --version           display version and exit
   -a, --address <VALUE>   broadcast address to send the magic packet to [default:
                           255.255.255.255]
