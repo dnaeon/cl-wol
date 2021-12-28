@@ -28,9 +28,6 @@
   (:use :cl :rove))
 (in-package :cl-wol.test)
 
-(defun make-octet-vector (contents)
-  (make-array (length contents) :element-type '(unsigned-byte 8) :initial-contents contents))
-
 (deftest test-mac-addresses-from-strings
   (testing "test supported MAC addresses from strings"
     (let ((items (list "00-0B-F8-39-AC-A6"
@@ -155,15 +152,15 @@
 
 (deftest make-magic-packet
   (testing "test make-magic-packet with vectors"
-    (let ((items (list (list :addr (make-octet-vector '(0 0 0 0 0 0))
+    (let ((items (list (list :addr (cl-wol.core:make-octet-vector '(0 0 0 0 0 0))
 			     :octets #(0 0 0 0 0 0)
 			     :password nil)
-		       (list :addr (make-octet-vector '(255 255 255 255 255 255))
+		       (list :addr (cl-wol.core:make-octet-vector '(255 255 255 255 255 255))
 			     :octets #(255 255 255 255 255 255)
 			     :password nil)
-		       (list :addr (make-octet-vector '(1 2 3 4 5 6))
+		       (list :addr (cl-wol.core:make-octet-vector '(1 2 3 4 5 6))
 			     :octets #(1 2 3 4 5 6)
-			     :password (make-octet-vector '(0 0 0 0 0 0))))))
+			     :password (cl-wol.core:make-octet-vector '(0 0 0 0 0 0))))))
       (dolist (item items)
 	(let* ((addr (getf item :addr))
 	       (octets (getf item :octets))
@@ -173,8 +170,8 @@
 	      (format nil "mac-octets match for ~A" addr))))))
 
   (testing "test make-magic-packet with bad vectors"
-    (let ((items (list (list :addr (make-octet-vector '(0)))
-		       (list :addr (make-octet-vector '(1 2 3))))))
+    (let ((items (list (list :addr (cl-wol.core:make-octet-vector '(0)))
+		       (list :addr (cl-wol.core:make-octet-vector '(1 2 3))))))
       (dolist (item items)
 	(let* ((addr (getf item :addr)))
 	  (ok (signals (magic-packet (cl-wol.core:make-magic-packet addr)))
