@@ -39,8 +39,9 @@ hosts and their MAC addresses from a local SQLite database.
 
 The following formats of MAC addresses are supported by =cl-wol=.
 
-- =AA:BB:CC:DD:EE:FF=
-- =AA-BB-CC-DD-EE-FF=
+- As a string in =AA:BB:CC:DD:EE:FF= format
+- As a string in =AA-BB-CC-DD-EE-FF= format
+- As a =(simple-array (unsigned-byte 8) (6))= vector
 
 ** API
 
@@ -63,7 +64,7 @@ first need to create a new instance of =CL-WOL.CORE:MAGIC-PACKET=.
 
 #+begin_src lisp
   CL-USER> (defparameter *magic-packet*
-	     (cl-wol.core:make-magic-packet "aa:bb:cc:dd:ee:ff"))
+             (cl-wol.core:make-magic-packet "aa:bb:cc:dd:ee:ff"))
   *MAGIC-PACKET*
 #+end_src
 
@@ -75,7 +76,18 @@ appended to the payload you can evaluate the following expression.
 
 #+begin_src lisp
   CL-USER> (defparameter *magic-packet*
-	     (cl-wol.core:make-magic-packet "aa:bb:cc:dd:ee:ff" "00-00-00-00-00-00"))
+             (cl-wol.core:make-magic-packet "aa:bb:cc:dd:ee:ff" "00-00-00-00-00-00"))
+  *MAGIC-PACKET*
+#+end_src
+
+Another way to create a magic packet is by providing a =(simple-array
+(unsigned-byte 8) (6)= vector to =CL-WOL.CORE:MAKE-MAGIC-PACKET=. You
+can also use the =CL-WOL.CORE:MAKE-OCTET-VECTOR= function to create a
+new octet vector. For example.
+
+#+begin_src lisp
+  CL-USER> (defparameter *magic-packet*
+             (cl-wol.core:make-magic-packet (cl-wol.core:make-octet-vector #(1 2 3 4 5 6))))
   *MAGIC-PACKET*
 #+end_src
 
