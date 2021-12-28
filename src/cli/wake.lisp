@@ -80,7 +80,8 @@ options and arguments from the command-line"
    (clingon:make-option :string
                         :description "optional SecureOn password to send"
                         :long-name "password"
-                        :key :password)
+                        :key :password
+                        :env-vars '("SECUREON_PASSWORD"))
    (clingon:make-option :list
                         :description "host to lookup from the database and wake"
                         :short-name #\n
