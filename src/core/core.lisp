@@ -44,12 +44,17 @@
    :*mac-regex*
    :parse-hex-bytes
    :magic-packet
-   :make-magic-packet))
+   :make-magic-packet
+   :make-octet-vector))
 (in-package :cl-wol.core)
 
 (deftype simple-octet-vector (&optional length)
   (let ((length (or length '*)))
     `(simple-array (unsigned-byte 8) (,length))))
+
+(defun make-octet-vector (contents)
+  "Make an octet vector from the given contents"
+  (make-array (length contents) :element-type '(unsigned-byte 8) :initial-contents contents))
 
 (defgeneric mac-address (object)
   (:documentation "Returns the string representation of the MAC
