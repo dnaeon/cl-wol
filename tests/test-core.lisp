@@ -28,8 +28,11 @@
   (:use :cl :rove))
 (in-package :cl-wol.test)
 
-(deftest test-mac-addresses
-  (testing "test supported MAC addresses"
+(defun make-octet-vector (contents)
+  (make-array (length contents) :element-type '(unsigned-byte 8) :initial-contents contents))
+
+(deftest test-mac-addresses-from-strings
+  (testing "test supported MAC addresses from strings"
     (let ((items (list "00-0B-F8-39-AC-A6"
 		       "00-1C-42-0F-B2-4E"
 		       "D0-F0-DB-97-46-67"
@@ -43,7 +46,7 @@
 	(ok (cl-wol.core:parse-hex-bytes item) (format nil "parse mac address ~A" item))
 	(ok (cl-wol.core:make-magic-packet item) (format nil "make-magic-packet with ~A" item)))))
 
-  (testing "test unsupported MAC addresses"
+  (testing "test unsupported MAC addresses from strings"
     (let ((items (list ""
 		       "invalid mac address"
 		       "00 A0 94 0B 14 66"
@@ -149,3 +152,30 @@
 		  #xAA #xBB #xCC #xDD #xEE #xFF   ;; 16th repetition
 		  #x01 #x02 #x03 #x04 #x05 #x06)) ;; SecureOn password
 	"encode-payload matches for aa-bb-cc-dd-ee-ff with SecureOn password")))
+
+(deftest make-magic-packet
+  (testing "test make-magic-packet with vectors"
+    (let ((items (list (list :addr (make-octet-vector '(0 0 0 0 0 0))
+			     :octets #(0 0 0 0 0 0)
+			     :password nil)
+		       (list :addr (make-octet-vector '(255 255 255 255 255 255))
+			     :octets #(255 255 255 255 255 255)
+			     :password nil)
+		       (list :addr (make-octet-vector '(1 2 3 4 5 6))
+			     :octets #(1 2 3 4 5 6)
+			     :password (make-octet-vector '(0 0 0 0 0 0))))))
+      (dolist (item items)
+	(let* ((addr (getf item :addr))
+	       (octets (getf item :octets))
+	       (password (getf item :password))
+	       (magic-packet (cl-wol.core:make-magic-packet addr password)))
+	  (ok (equalp (cl-wol.core:mac-octets magic-packet) octets)
+	      (format nil "mac-octets match for ~A" addr))))))
+
+  (testing "test make-magic-packet with bad vectors"
+    (let ((items (list (list :addr (make-octet-vector '(0)))
+		       (list :addr (make-octet-vector '(1 2 3))))))
+      (dolist (item items)
+	(let* ((addr (getf item :addr)))
+	  (ok (signals (magic-packet (cl-wol.core:make-magic-packet addr)))
+	      (format nil "signals on make-magic-packet with ~A" addr)))))))
