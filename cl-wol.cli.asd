@@ -43,7 +43,7 @@
   :depends-on (:cl-wol.core
                :clingon
                :cl-migratum
-               :cl-migratum.driver.sql
+               :cl-migratum.driver.dbi
                :cl-migratum.provider.local-path
                :cl-ascii-table)
   :build-operation "program-op"

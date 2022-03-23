@@ -30,7 +30,7 @@
   (:import-from :cl-wol.core)
   (:import-from :clingon)
   (:import-from :cl-migratum)
-  (:import-from :cl-migratum.driver.sql)
+  (:import-from :cl-migratum.driver.dbi)
   (:import-from :cl-migratum.provider.local-path)
   (:import-from :ascii-table)
   (:export
