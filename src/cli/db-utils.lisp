@@ -39,7 +39,7 @@
 
 (defun migrate-db (db-conn)
   "Migrates the database to the latest version"
-  (let* ((provider (cl-migratum.provider.local-path:make-local-path-provider (list (db-migrations-path))))
+  (let* ((provider (cl-migratum.provider.local-path:make-provider (list (db-migrations-path))))
          (driver (cl-migratum.driver.dbi:make-driver provider db-conn)))
     (cl-migratum:provider-init provider)
     (cl-migratum:driver-init driver)
